@@ -1,0 +1,12 @@
+@font-face {
+    font-family: Roboto;
+    src: url("../static/fonts/Roboto.ttf");
+}
+
+body {
+    font-family: Roboto, sans-serif;
+}
+
+.main-buttons {
+    gap: 20px;
+}

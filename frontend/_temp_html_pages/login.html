@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+
+<div class="layout min-vh-100 min-vw-100 d-flex flex-column justify-content-center align-items-center">
+    <div class="login-form w-25 d-flex flex-column justify-content-center align-items-center">
+        <img src="static/images/logo-big.png" alt="logo" class="mb-5">
+        <h1 class="mb-4" id="main-title">Вход</h1>
+        <div class="input-group mb-2 d-none" id="input-username">
+            <span class="input-group-text d-flex justify-content-center align-items-center">
+                <img src="static/images/person.png" alt="envelope">
+            </span>
+            <input type="text" class="form-control" placeholder="ФИО">
+        </div>
+        <div class="input-group mb-2" id="input-email">
+            <span class="input-group-text d-flex justify-content-center align-items-center">
+                <img src="static/images/mail.png" alt="envelope">
+            </span>
+            <input type="email" class="form-control" placeholder="Электронная почта">
+        </div>
+        <div class="input-group mb-2" id="input-password">
+            <span class="input-group-text d-flex justify-content-center align-items-center">
+                <img src="static/images/lock.png" alt="envelope">
+            </span>
+            <input type="password" class="form-control" placeholder="Пароль">
+        </div>
+        <div class="mb-4 d-flex align-items-center justify-content-start w-100" id="checkbox-remember-me">
+            <input type="checkbox" class="me-2">
+            <span>Запомнить меня</span>
+        </div>
+        <div class="input-group mb-4 d-none" id="input-password-repeat">
+            <span class="input-group-text d-flex justify-content-center align-items-center">
+                <img src="static/images/lock.png" alt="envelope">
+            </span>
+            <input type="password" class="form-control" placeholder="Подтверждение пароля">
+        </div>
+        <button class="btn btn-primary w-100 mb-2">Войти</button>
+        <div id="link" class="text-start w-100">
+            <span class="me-2">Ещё нет аккаунта?</span>
+            <a href="#/signup">Пройдите регистрацию</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

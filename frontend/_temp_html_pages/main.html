@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>main</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+
+<div class="p-5">
+    <h1 class="mt-5 mb-5">Главная</h1>
+    <div class="main-buttons d-flex align-items-center mb-5 pb-5">
+        <button class="btn btn-secondary">Сегодня</button>
+        <button class="btn btn-outline-secondary">Неделя</button>
+        <button class="btn btn-outline-secondary">Месяц</button>
+        <button class="btn btn-outline-secondary">Год</button>
+        <button class="btn btn-outline-secondary">Все</button>
+        <button class="btn btn-outline-secondary">Интервал</button>
+        <span>с</span>
+        <span class="text-decoration-underline text-secondary" id="date-from">Дата</span>
+        <span>по</span>
+        <span class="text-decoration-underline text-secondary" id="date-to">Дата</span>
+    </div>
+    <div class="row w-auto">
+        <div class="col">
+            <h3 class="text-center mb-3">Доходы</h3>
+            <canvas id="chart-incomes" width="450" height="450"
+                    class="border-end border-1 border-secondary border-opacity-25"></canvas>
+        </div>
+        <div class="col">
+            <h3 class="text-center mb-3">Расходы</h3>
+            <canvas id="chart-expenses" width="450" height="450"></canvas>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
