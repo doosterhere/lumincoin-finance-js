@@ -17,7 +17,8 @@ export default {
                 'limegreen',
                 'saddlebrown',
                 'midnightblue',
-                'aquamarine'
+                'aquamarine',
+                'black'
             ],
             hoverOffset: 4
         }]
