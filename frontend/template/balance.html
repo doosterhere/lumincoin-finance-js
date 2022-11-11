@@ -1,0 +1,70 @@
+<div class="p-5">
+    <h1 class="mt-5 mb-5" id="title">Доходы и расходы</h1>
+    <div class="buttons d-flex mb-5">
+        <button class="btn btn-success" id="button-create-income">Создать доход</button>
+        <button class="btn btn-danger" id="button-create-expense">Создать расход</button>
+    </div>
+    <div class="filter-buttons d-flex align-items-center mb-2 pb-5">
+        <button class="btn btn-secondary">Сегодня</button>
+        <button class="btn btn-outline-secondary">Неделя</button>
+        <button class="btn btn-outline-secondary">Месяц</button>
+        <button class="btn btn-outline-secondary">Год</button>
+        <button class="btn btn-outline-secondary">Все</button>
+        <button class="btn btn-outline-secondary">Интервал</button>
+        <span>с</span>
+        <span class="text-decoration-underline text-secondary" id="date-from">Дата</span>
+        <span>по</span>
+        <span class="text-decoration-underline text-secondary" id="date-to">Дата</span>
+    </div>
+    <div class="data-table">
+        <div class="row align-items-center border-bottom border-top border-1 border-secondary border-opacity-75">
+            <div class="col-2 text-center fw-bold">№ операции</div>
+            <div class="col-1 text-center fw-bold">Тип</div>
+            <div class="col-2 text-center fw-bold">Категория</div>
+            <div class="col-1 text-center fw-bold">Сумма</div>
+            <div class="col-2 text-center fw-bold">Дата</div>
+            <div class="col-3 text-center fw-bold">Комментарий</div>
+            <div class="col-1 text-center fw-bold"></div>
+        </div>
+        <div class="row align-items-center border-bottom border-1 border-secondary border-opacity-75">
+            <div class="col-2 text-center fw-bold">1</div>
+            <div class="col-1 text-center text-success">доход</div>
+            <div class="col-2 text-center">зарплата</div>
+            <div class="col-1 text-center"><span>500</span>$</div>
+            <div class="col-2 text-center">11.09.2022</div>
+            <div class="col-3 text-center"></div>
+            <div class="col-1 text-end pe-0">
+                <a href="javascript:void(0)" class="text-decoration-none me-2" data-bs-toggle="modal"
+                   data-bs-target="#confirm-delete-window">
+                    <img src="static/images/trash-icon.png" alt="delete">
+                </a>
+                <a href="#/editing-balance" class="text-decoration-none">
+                    <img src="static/images/pen-icon.png" alt="edit">
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="confirm-delete-window" data-bs-backdrop="static" data-bs-keyboard="false"
+         tabindex="-1"
+         aria-labelledby="modal-header" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header border-0">
+                    <h2 class="modal-title fs-5 text-center" id="modal-header">
+                        Вы действительно хотите удалить операцию?
+                    </h2>
+                </div>
+                <div class="modal-footer d-flex justify-content-center border-0">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                            id="modal-button-delete">Да,
+                        удалить
+                    </button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                            id="modal-button-close">Не
+                        удалять
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
