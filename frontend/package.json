@@ -4,7 +4,9 @@
   "description": "",
   "main": "config/sidebarConfig.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "http-server ./dist",
+    "build": "webpack",
+    "dev": "webpack serve --open"
   },
   "keywords": [],
   "author": "",

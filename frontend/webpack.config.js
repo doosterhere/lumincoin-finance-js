@@ -21,23 +21,24 @@ module.exports = {
                 {from: "static/fonts", to: "fonts"},
                 {from: "static/images", to: "images"},
                 {from: "config", to: "config"},
+                {from: "libs", to: "libs"},
             ],
         }),
     ],
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /(node_modules)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env']
-                    }
-                }
-            }
-        ]
-    },
+    // module: {
+    //     rules: [
+    //         {
+    //             test: /\.js$/,
+    //             exclude: /(node_modules)/,
+    //             use: {
+    //                 loader: 'babel-loader',
+    //                 options: {
+    //                     presets: ['@babel/preset-env']
+    //                 }
+    //             }
+    //         }
+    //     ]
+    // },
     devServer: {
         static: ".dist",
         compress: true,

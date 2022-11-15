@@ -1,4 +1,4 @@
-import Config from '../../config/pathConfig.js'
+import PathConfig from "../../config/pathConfig.js";
 
 export class Auth {
     static accessTokenKey = 'accessToken';
@@ -8,7 +8,7 @@ export class Auth {
     static async processUnauthorizedResponse() {
         const refreshToken = localStorage.getItem(this.refreshTokenKey);
         if (refreshToken) {
-            const response = await fetch(`${Config.host}/refresh`, {
+            const response = await fetch(`${PathConfig.host}/refresh`, {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',
@@ -26,14 +26,14 @@ export class Auth {
             }
         }
         this.removeTokens();
-        location.href = '/#';
+        location.href = '/#/main';
         return false;
     }
 
     static async logout() {
         const refreshToken = localStorage.getItem(this.refreshTokenKey);
         if (refreshToken) {
-            const response = await fetch(`${Config.host}/logout`, {
+            const response = await fetch(`${PathConfig.host}/logout`, {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',

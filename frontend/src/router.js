@@ -1,30 +1,98 @@
 import {Auth} from "./services/auth.js";
+import {Main} from "./components/main.js";
+import {Balance} from "./components/balance.js";
+import {BalanceAction} from "./components/balance-action.js";
+import {Category} from "./components/category.js";
+import {CategoryAction} from "./components/category-action.js";
+import {SignIn} from "./components/sign-in.js";
+import {SidebarConfig} from "../config/sidebarConfig.js";
 
 export class Router {
     constructor() {
+        this.sidebarElement = document.getElementById('sidebar');
         this.contentElement = document.getElementById('content');
-        this.stylesElement = document.getElementById('styles');
-        this.titleElement = document.getElementById('title');
-        this.profileElement = document.getElementById('profile');
-        this.profileFullNameElement = document.getElementById('profile-fullname');
+        this.balanceElement = document.getElementById('user-balance');
+        this.userNameElement = document.getElementById('user-name');
 
         this.routes = [
             {
-                route: '#/login',
-                title: 'Вход в систему',
-                template: 'templates/login.html',
-                styles: 'styles/form.css',
+                route: '#/main',
+                template: 'templates/main.html',
+                sidebar: true,
                 load: () => {
-                    new Form('login');
+                    new Main();
+                }
+            },
+            {
+                route: '#/balance',
+                template: 'templates/balance.html',
+                sidebar: true,
+                load: () => {
+                    new Balance();
+                }
+            },
+            {
+                route: '#/balance-creating',
+                template: 'templates/balance-action.html',
+                sidebar: true,
+                load: () => {
+                    new BalanceAction('create');
+                }
+            },
+            {
+                route: '#/balance-editing',
+                template: 'templates/balance-action.html',
+                sidebar: true,
+                load: () => {
+                    new BalanceAction('edit');
+                }
+            },
+            {
+                route: '#/incomes',
+                template: 'templates/category.html',
+                sidebar: true,
+                load: () => {
+                    new Category('incomes');
+                }
+            },
+            {
+                route: '#/expenses',
+                template: 'templates/category.html',
+                sidebar: true,
+                load: () => {
+                    new Category('expenses');
+                }
+            },
+            {
+                route: '#/category-editing',
+                template: 'templates/category-action.html',
+                sidebar: true,
+                load: () => {
+                    new CategoryAction('edit');
+                }
+            },
+            {
+                route: '#/category-creating',
+                template: 'templates/category-action.html',
+                sidebar: true,
+                load: () => {
+                    new CategoryAction('create');
+                }
+            },
+            {
+                route: '#/login',
+                template: 'templates/login.html',
+                sidebar: false,
+                load: () => {
+                    new SignIn('login');
                 }
             },
             {
                 route: '#/signup',
-                title: 'Регистрация',
-                template: 'templates/signup.html',
-                styles: 'styles/form.css',
+                template: 'templates/sign-up.html',
+                sidebar: false,
                 load: () => {
-                    new Form('signup');
+                    new SignIn('signup');
                 }
             },
         ];
@@ -35,7 +103,7 @@ export class Router {
 
         if (urlRoute === '#/logout') {
             await Auth.logout();
-            location.href = '#/';
+            location.href = '#/login';
             return;
         }
 
@@ -44,22 +112,20 @@ export class Router {
         });
 
         if (!newRoute) {
-            window.location.href = '#/';
+            window.location.href = '#/main';
             return;
         }
 
-        this.contentElement.innerHTML = await fetch(newRoute.template).then(response => response.text());
-        this.stylesElement.setAttribute('href', newRoute.styles);
-        this.titleElement.innerText = newRoute.title;
-
-        const userInfo = Auth.getUserInfo();
-        const accessToken = localStorage.getItem(Auth.accessTokenKey);
-
-        if (userInfo && accessToken) {
-            this.profileElement.style.display = 'flex';
-            this.profileFullNameElement.innerText = userInfo.fullName;
+        if (newRoute.sidebar) {
+            this.sidebarElement.classList.remove('d-none');
+            this.sidebarElement.classList.add('d-flex');
         }
-        if (!userInfo || !accessToken) this.profileElement.style.display = 'none';
+        if (!newRoute.sidebar) {
+            this.sidebarElement.classList.remove('d-flex');
+            this.sidebarElement.classList.add('d-none');
+        }
+        const sidebar = new SidebarConfig();
+        this.contentElement.innerHTML = await fetch(newRoute.template).then(response => response.text());
 
         newRoute.load();
     }
