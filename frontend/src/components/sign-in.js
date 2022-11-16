@@ -4,11 +4,16 @@ import {CustomHttp} from "../services/custom-http.js";
 
 export class SignIn {
     constructor(view) {
+        const accessToken = localStorage.getItem(Auth.accessTokenKey);
+        const isRemember = localStorage.getItem(Auth.userAdditionalInfoKey);
+        if (accessToken && isRemember) {
+            location.href = '#/main';
+            return;
+        }
         this.rememberElement = null;
         this.rememberElementText = null;
         this.processElement = null;
         this.page = view;
-        const accessToken = localStorage.getItem(Auth.accessTokenKey);
         this.fields = [
             {
                 name: 'email',
@@ -26,6 +31,10 @@ export class SignIn {
             }
         ];
 
+        this.init();
+    }
+
+    init() {
         if (this.page === 'signup') {
             this.fields.push(
                 {
@@ -46,14 +55,6 @@ export class SignIn {
 
         const that = this;
 
-        if (this.page === 'login') {
-            this.rememberElement = document.getElementById('checkbox');
-            this.rememberElementText = document.getElementById('checkbox-text');
-            this.rememberElementText.onclick = function () {
-                that.rememberElement.checked = !that.rememberElement.checked;
-            }
-        }
-
         this.fields.forEach(field => {
             field.element = document.getElementById(field.id);
             field.element.onchange = function () {
@@ -65,7 +66,20 @@ export class SignIn {
         this.processElement.onclick = function () {
             that.processForm();
         }
+
+        if (this.page === 'login') {
+            if (Auth.getAdditionalUserInfo()) {
+                this.fields.find(field => field.name === 'email').element.value = Auth.getAdditionalUserInfo().registeredEmail;
+                this.fields.find(field => field.name === 'email').element.onchange();
+            }
+            this.rememberElement = document.getElementById('checkbox');
+            this.rememberElementText = document.getElementById('checkbox-text');
+            this.rememberElementText.onclick = function () {
+                that.rememberElement.checked = !that.rememberElement.checked;
+            }
+        }
     }
+
 
     validateField(field, element) {
         if (!element.value || !element.value.match(field.regex)) {
@@ -73,15 +87,14 @@ export class SignIn {
             field.valid = false;
         }
 
-        if (field.valid && field.name === 'password-repeat' && element.value !== element.parentElement.previousElementSibling.childNodes[3].value) {
-            element.classList.add('border-danger');
-            field.valid = false;
-        }
-
-
         if (element.value && element.value.match(field.regex)) {
             element.classList.remove('border-danger');
             field.valid = true;
+        }
+
+        if (field.valid && field.name === 'password-repeat' && element.value !== this.fields.find(field => field.name === 'password').element.value) {
+            element.classList.add('border-danger');
+            field.valid = false;
         }
 
         this.validateForm();
@@ -118,6 +131,10 @@ export class SignIn {
                         if (result.error || !result.user) {
                             throw new Error(result.message);
                         }
+                        Auth.setAdditionalUserInfo({
+                            registeredEmail: email,
+                            rememberMe: false
+                        });
                         location.href = '#/login';
                         return;
                     }
@@ -143,6 +160,12 @@ export class SignIn {
                         lastName: result.user.lastName,
                         id: result.user.id
                     });
+                    if (this.rememberElement.checked) {
+                        Auth.setAdditionalUserInfo({
+                            registeredEmail: email,
+                            rememberMe: true
+                        });
+                    }
                     location.href = '#/main';
                 }
             } catch (error) {

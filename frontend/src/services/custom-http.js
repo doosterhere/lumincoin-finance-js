@@ -10,7 +10,7 @@ export class CustomHttp {
             }
         };
         let token = localStorage.getItem(Auth.accessTokenKey);
-        if (token) params.headers['x-access-token'] = token;
+        if (token) params.headers['x-auth-token'] = token;
 
         if (body) {
             params.body = JSON.stringify(body);

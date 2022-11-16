@@ -4,6 +4,7 @@ export class Auth {
     static accessTokenKey = 'accessToken';
     static refreshTokenKey = 'refreshToken';
     static userInfoKey = 'userInfo';
+    static userAdditionalInfoKey = 'userAdditionalInfo';
 
     static async processUnauthorizedResponse() {
         const refreshToken = localStorage.getItem(this.refreshTokenKey);
@@ -26,7 +27,7 @@ export class Auth {
             }
         }
         this.removeTokens();
-        location.href = '/#/main';
+        location.href = '#/login';
         return false;
     }
 
@@ -47,6 +48,7 @@ export class Auth {
                 if (result && !result.error) {
                     this.removeTokens();
                     this.removeUserInfo();
+                    this.removeAdditionalUserInfo();
                     return true;
                 }
             }
@@ -75,5 +77,19 @@ export class Auth {
 
     static removeUserInfo() {
         localStorage.removeItem(this.userInfoKey);
+    }
+
+    static setAdditionalUserInfo(info) {
+        localStorage.setItem(this.userAdditionalInfoKey, JSON.stringify(info));
+    }
+
+    static getAdditionalUserInfo() {
+        const userAdditionalInfo = localStorage.getItem(this.userAdditionalInfoKey);
+        if (userAdditionalInfo) return JSON.parse(userAdditionalInfo);
+        return null;
+    }
+
+    static removeAdditionalUserInfo() {
+        localStorage.removeItem(this.userAdditionalInfoKey);
     }
 }

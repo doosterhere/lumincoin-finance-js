@@ -64,19 +64,35 @@ export class Router {
                 }
             },
             {
-                route: '#/category-editing',
+                route: '#/income-editing',
                 template: 'templates/category-action.html',
                 sidebar: true,
                 load: () => {
-                    new CategoryAction('edit');
+                    new CategoryAction('income', 'edit');
                 }
             },
             {
-                route: '#/category-creating',
+                route: '#/expense-editing',
                 template: 'templates/category-action.html',
                 sidebar: true,
                 load: () => {
-                    new CategoryAction('create');
+                    new CategoryAction('expense', 'edit');
+                }
+            },
+            {
+                route: '#/income-creating',
+                template: 'templates/category-action.html',
+                sidebar: true,
+                load: () => {
+                    new CategoryAction('income', 'create');
+                }
+            },
+            {
+                route: '#/expense-creating',
+                template: 'templates/category-action.html',
+                sidebar: true,
+                load: () => {
+                    new CategoryAction('expense', 'create');
                 }
             },
             {
@@ -112,7 +128,7 @@ export class Router {
         });
 
         if (!newRoute) {
-            window.location.href = '#/main';
+            window.location.href = '#/login';
             return;
         }
 

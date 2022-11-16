@@ -79,11 +79,13 @@ input[type="checkbox"] {
 }
 
 .categories {
+    max-width: 1100px;
     gap: 20px;
 }
 
 .categories div {
     min-width: 352px;
+    min-height: 117px;
 }
 
 .data-table {
