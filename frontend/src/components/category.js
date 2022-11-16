@@ -17,6 +17,8 @@ export class Category {
         this.categoriesBlock = null;
         this.addCategoryElement = null;
         this.modalButtonDelete = null;
+        this.modalHeaderSpan = null;
+        this.categoryType = null;
 
         this.init();
     }
@@ -26,20 +28,25 @@ export class Category {
         this.title = document.getElementById('main-title');
         this.categoriesBlock = document.getElementById('categories');
         this.addCategoryElement = document.getElementById('add-category');
+        this.modalHeaderSpan = document.querySelector('.modal-header span');
         this.modalButtonDelete = document.getElementById('modal-button-delete');
         this.modalButtonDelete.onclick = function () {
             that.deleteCategory.call(that);
         }
 
         if (this.page === 'incomes') {
-            this.title.innerText = 'Доходы';
+            this.categoryType = 'Доходы';
+            this.title.innerText = this.categoryType;
             this.requestString = 'categories/income';
             this.addCategoryElement.setAttribute('href', '#/income-creating');
+            this.modalHeaderSpan.innerText = this.categoryType.toLowerCase();
         }
         if (this.page === 'expenses') {
-            this.title.innerText = 'Расходы';
+            this.categoryType = 'Расходы';
+            this.title.innerText = this.categoryType;
             this.requestString = 'categories/expense';
             this.addCategoryElement.setAttribute('href', '#/expense-creating');
+            this.modalHeaderSpan.innerText = this.categoryType.toLowerCase();
         }
 
         try {
