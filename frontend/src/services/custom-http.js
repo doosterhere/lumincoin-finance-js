@@ -9,6 +9,7 @@ export class CustomHttp {
                 'Accept': 'application/json'
             }
         };
+
         let token = localStorage.getItem(Auth.accessTokenKey);
         if (token) params.headers['x-auth-token'] = token;
 
@@ -16,7 +17,15 @@ export class CustomHttp {
             params.body = JSON.stringify(body);
         }
 
-        const response = await fetch(url, params);
+        let response = {};
+        await fetch(url, params)
+            .then(res => {
+                response = res;
+                if (response.status === 401) {
+                    throw new Error('An invalid email/password has been entered or an authorization token update is required.');
+                }
+            })
+            .catch((error) => console.log(error.message));
 
         if (response.status < 200 || response.status > 299) {
             if (response.status === 401) {

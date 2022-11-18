@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "1.0.0",
   "description": "",
-  "main": "config/sidebarConfig.js",
+  "main": "src/components/sidebar.js",
   "scripts": {
     "start": "http-server ./dist",
     "build": "webpack",

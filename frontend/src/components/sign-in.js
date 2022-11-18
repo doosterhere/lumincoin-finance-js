@@ -135,6 +135,7 @@ export class SignIn {
                             registeredEmail: email,
                             rememberMe: false
                         });
+                        console.log('Registration has been successful.');
                         location.href = '#/login';
                         return;
                     }

@@ -21,7 +21,8 @@ export class Auth {
             if (response && response.status === 200) {
                 const result = await response.json();
                 if (result && !result.error) {
-                    this.setTokens(result.accessToken, result.refreshToken);
+                    this.setTokens(result.tokens.accessToken, result.tokens.refreshToken);
+                    console.log('The authorization token has been successfully updated.');
                     return true;
                 }
             }

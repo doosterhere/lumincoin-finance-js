@@ -20,8 +20,7 @@ body {
     fill: black;
 }
 
-.nav-link span,
-.list-group-item div {
+.nav-link span {
     color: #052C65;
 }
 

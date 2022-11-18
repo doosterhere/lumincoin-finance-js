@@ -5,14 +5,12 @@ import {BalanceAction} from "./components/balance-action.js";
 import {Category} from "./components/category.js";
 import {CategoryAction} from "./components/category-action.js";
 import {SignIn} from "./components/sign-in.js";
-import {SidebarConfig} from "../config/sidebarConfig.js";
+import {Sidebar} from "./components/sidebar.js";
 
 export class Router {
     constructor() {
         this.sidebarElement = document.getElementById('sidebar');
         this.contentElement = document.getElementById('content');
-        this.balanceElement = document.getElementById('user-balance');
-        this.userNameElement = document.getElementById('user-name');
 
         this.routes = [
             {
@@ -133,14 +131,15 @@ export class Router {
         }
 
         if (newRoute.sidebar) {
-            this.sidebarElement.classList.remove('d-none');
-            this.sidebarElement.classList.add('d-flex');
+            const sidebarTemplate = 'templates/sidebar.html';
+            this.sidebarElement.innerHTML = await fetch(sidebarTemplate).then(response => response.text());
+            new Sidebar();
         }
+
         if (!newRoute.sidebar) {
-            this.sidebarElement.classList.remove('d-flex');
-            this.sidebarElement.classList.add('d-none');
+            this.sidebarElement.innerHTML = null;
         }
-        const sidebar = new SidebarConfig();
+
         this.contentElement.innerHTML = await fetch(newRoute.template).then(response => response.text());
 
         newRoute.load();
