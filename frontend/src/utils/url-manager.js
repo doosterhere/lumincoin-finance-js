@@ -13,8 +13,4 @@ export class UrlManager {
 
         return params;
     }
-
-    static checkUserData(params) {
-        if (!params.name || !params.lastName || !params.email) location.href = '#/';
-    }
 }

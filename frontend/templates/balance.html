@@ -5,12 +5,12 @@
         <button class="btn btn-danger" id="button-create-expense">Создать расход</button>
     </div>
     <div class="filter-buttons d-flex align-items-center mb-2 pb-5">
-        <button class="btn btn-secondary">Сегодня</button>
-        <button class="btn btn-outline-secondary">Неделя</button>
-        <button class="btn btn-outline-secondary">Месяц</button>
-        <button class="btn btn-outline-secondary">Год</button>
-        <button class="btn btn-outline-secondary">Все</button>
-        <button class="btn btn-outline-secondary">Интервал</button>
+        <button class="btn btn-secondary" id="period-today-button">Сегодня</button>
+        <button class="btn btn-outline-secondary" id="period-week-button">Неделя</button>
+        <button class="btn btn-outline-secondary" id="period-month-button">Месяц</button>
+        <button class="btn btn-outline-secondary" id="period-year-button">Год</button>
+        <button class="btn btn-outline-secondary" id="period-all-button">Все</button>
+        <button class="btn btn-outline-secondary" id="period-interval-button">Интервал</button>
         <span>с</span>
         <span class="text-decoration-underline text-secondary" id="date-from">Дата</span>
         <span>по</span>
@@ -26,22 +26,9 @@
             <div class="col-3 text-center fw-bold">Комментарий</div>
             <div class="col-1 text-center fw-bold"></div>
         </div>
-        <div class="row align-items-center border-bottom border-1 border-secondary border-opacity-75">
-            <div class="col-2 text-center fw-bold">1</div>
-            <div class="col-1 text-center text-success">доход</div>
-            <div class="col-2 text-center">зарплата</div>
-            <div class="col-1 text-center"><span>500</span>$</div>
-            <div class="col-2 text-center">11.09.2022</div>
-            <div class="col-3 text-center"></div>
-            <div class="col-1 text-end pe-0">
-                <a href="javascript:void(0)" class="text-decoration-none me-2" data-bs-toggle="modal"
-                   data-bs-target="#confirm-delete-window">
-                    <img src="images/trash-icon.png" alt="delete">
-                </a>
-                <a href="#/editing-balance" class="text-decoration-none">
-                    <img src="images/pen-icon.png" alt="edit">
-                </a>
-            </div>
+        <!--    insert data here    -->
+        <div id="data-table">
+
         </div>
     </div>
     <div class="modal fade" id="confirm-delete-window" data-bs-backdrop="static" data-bs-keyboard="false"

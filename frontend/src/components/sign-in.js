@@ -26,7 +26,7 @@ export class SignIn {
                 name: 'password',
                 id: 'input-password',
                 element: null,
-                regex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+                regex: /^(?=.*\d)(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
                 valid: false
             }
         ];
@@ -41,7 +41,7 @@ export class SignIn {
                     name: 'username',
                     id: 'input-username',
                     element: null,
-                    regex: /^[A-ZА-ЯЁ][a-zа-яё]+\s*[A-ZА-ЯЁ][a-zа-яё]+$/,
+                    regex: /^[А-ЯЁ][а-яё]+\s*[А-ЯЁ][а-яё]+$/,
                     valid: false
                 },
                 {

@@ -17,7 +17,6 @@ export class Sidebar {
     }
 
     init() {
-        this.balanceElement = document.getElementById('user-balance');
         this.userNameElement = document.getElementById('user-name');
         this.buttonMain = document.getElementById('buttonMain');
         this.buttonBalance = document.getElementById('buttonBalance');
@@ -120,9 +119,5 @@ export class Sidebar {
         const state = localStorage.getItem('catListState');
         if (state) return state;
         return 'collapsed';
-    }
-
-    updateBalance(value) {
-        this.balanceElement.innerText = value;
     }
 }
