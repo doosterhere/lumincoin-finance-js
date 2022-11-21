@@ -3,7 +3,6 @@ import pathConfig from "../../config/pathConfig.js";
 
 export class Balance {
     constructor() {
-        this.balanceElement = null;
         this.period = 'today';
         this.createIncomeElement = null;
         this.createExpenseElement = null;
@@ -26,7 +25,6 @@ export class Balance {
     }
 
     async init() {
-        this.balanceElement = document.getElementById('user-balance');
         this.createIncomeElement = document.getElementById('button-create-income');
         this.createExpenseElement = document.getElementById('button-create-expense');
         this.periodTodayElement = document.getElementById('period-today-button');
@@ -226,20 +224,4 @@ export class Balance {
             console.log(error);
         }
     }
-
-    async editOperation() {
-
-    }
-
-    // async setBalance(value) {
-    //     try {
-    //         const result = await CustomHttp.request(`${pathConfig.host}/balance`, 'PUT', {
-    //             balance: value
-    //         });
-    //         if (result && !result.error) this.balanceElement.innerText = result.balance;
-    //         if (result.error) throw new Error(result.message);
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
 }

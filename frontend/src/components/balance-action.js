@@ -28,6 +28,7 @@ export class BalanceAction {
         this.incomeOptionElement = null;
         this.expenseOptionElement = null;
         this.method = null;
+        this.datepickerElement = jQuery('#date-input');
 
         this.fields = [
             {
@@ -52,7 +53,7 @@ export class BalanceAction {
     }
 
     async init() {
-        jQuery('#date-input').datepicker({
+        this.datepickerElement.datepicker({
             format: "yyyy-mm-dd",
             weekStart: 1,
             endDate: "0d",
@@ -100,7 +101,7 @@ export class BalanceAction {
 
         if (this.action === 'create') {
             const today = new Date().toLocaleDateString();
-            jQuery('#date-input').datepicker('update', new Date(today));
+            this.datepickerElement.datepicker('update', new Date(today));
             this.titleElementSpanAction.innerText = 'Создание';
             this.actionElement.innerText = 'Создать';
             this.operationData.type = this.routeParams.type;
