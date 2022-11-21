@@ -1,8 +1,8 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/components/sidebar.js",
+  "description": "Lumincoin finance",
+  "main": "src/app.js",
   "scripts": {
     "start": "http-server ./dist",
     "build": "webpack",
@@ -13,7 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^5.2.2",
-    "chart.js": "^3.9.1"
+    "bootstrap-datepicker": "^1.9.0",
+    "chart.js": "^3.9.1",
+    "jquery": "^3.6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",

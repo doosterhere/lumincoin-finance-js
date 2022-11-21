@@ -1,4 +1,5 @@
 import {Auth} from "../services/auth.js";
+import {Balance} from "./balance.js";
 
 export class Sidebar {
     constructor() {
@@ -25,6 +26,8 @@ export class Sidebar {
         this.buttonExpenses = document.getElementById('buttonExpenses');
         this.subMenu = document.getElementById('collapse');
         this.location = location.hash.split('/')[1].match(/[a-z\-]*/g)[0];
+        this.balanceElement = document.getElementById('user-balance');
+        Balance.getBalance().then(balance => this.balanceElement.innerText = balance + '$');
 
         const userName = Auth.getUserInfo();
         if (userName) this.userNameElement.innerText = `${userName.firstName} ${userName.lastName}`;

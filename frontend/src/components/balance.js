@@ -1,6 +1,5 @@
 import {CustomHttp} from "../services/custom-http.js";
 import pathConfig from "../../config/pathConfig.js";
-import {Sidebar} from "./sidebar.js";
 
 export class Balance {
     constructor() {
@@ -15,8 +14,13 @@ export class Balance {
         this.periodAllElement = null;
         this.periodIntervalElement = null;
         this.dateFromElement = null;
+        this.dateFromInputElement = null;
         this.dateToElement = null;
+        this.dateToInputElement = null;
         this.dataTableElement = null;
+        this.intervalApplyButton = null;
+        this.intervalCloseButton = null;
+        this.modalButtonDelete = null;
 
         this.init();
     }
@@ -32,44 +36,95 @@ export class Balance {
         this.periodAllElement = document.getElementById('period-all-button');
         this.periodIntervalElement = document.getElementById('period-interval-button');
         this.dateFromElement = document.getElementById('date-from');
+        this.dateFromInputElement = document.getElementById('date-from-input');
         this.dateToElement = document.getElementById('date-to');
+        this.dateToInputElement = document.getElementById('date-to-input');
         this.dataTableElement = document.getElementById('data-table');
+        this.intervalApplyButton = document.getElementById('modal-button-datepicker-apply');
+        this.intervalCloseButton = document.getElementById('modal-button-datepicker-close');
+        this.modalButtonDelete = document.getElementById('modal-button-delete-confirm');
+        this.createIncomeElement = document.getElementById('button-create-income');
+        this.createExpenseElement = document.getElementById('button-create-expense');
+
+        jQuery('#datepicker').datepicker({
+            format: "yyyy-mm-dd",
+            weekStart: 1,
+            endDate: "0d",
+            todayBtn: "linked",
+            clearBtn: true,
+            language: "ru",
+            todayHighlight: true
+        });
 
         const that = this;
         this.periodTodayElement.onclick = function () {
-            that.setButtonPeriodStyle(this);
+            that.setButtonPeriodPressedStyle(this);
             that.period = 'today';
             that.processOperation();
         }
 
         this.periodWeekElement.onclick = function () {
-            that.setButtonPeriodStyle(this);
+            that.setButtonPeriodPressedStyle(this);
             that.period = 'week';
             that.processOperation();
         }
 
         this.periodMonthElement.onclick = function () {
-            that.setButtonPeriodStyle(this);
+            that.setButtonPeriodPressedStyle(this);
             that.period = 'month';
             that.processOperation();
         }
 
         this.periodYearElement.onclick = function () {
-            that.setButtonPeriodStyle(this);
+            that.setButtonPeriodPressedStyle(this);
             that.period = 'year';
             that.processOperation();
         }
 
         this.periodAllElement.onclick = function () {
-            that.setButtonPeriodStyle(this);
+            that.setButtonPeriodPressedStyle(this);
             that.period = 'all';
             that.processOperation();
         }
 
-        this.periodIntervalElement.onclick = function () {
-            that.setButtonPeriodStyle(this);
-            // that.period = `interval&dateFrom=${dateFrom}&dateTo=${dateTo}`;
+        this.periodIntervalElement.onclick = this.setButtonPeriodPressedStyle.bind(this, this.periodIntervalElement);
+
+        this.intervalCloseButton.onclick = function () {
+            jQuery('#datepicker').datepicker('clearDates');
+        }
+
+        this.dateFromInputElement.focusout = this.dateToInputElement.focusout = function () {
+            if (event.target.value === '') {
+                that.intervalApplyButton.setAttribute('disabled', 'disabled');
+                return;
+            }
+            that.intervalApplyButton.removeAttribute('disabled');
+        }
+
+        this.intervalApplyButton.onclick = function () {
+            that.dateFromElement.innerText = that.dateFromInputElement.value;
+            that.dateToElement.innerText = that.dateToInputElement.value;
+            jQuery('#datepicker').datepicker('clearDates');
+            that.period = `interval&dateFrom=${that.dateFromElement.innerText}&dateTo=${that.dateToElement.innerText}`;
             that.processOperation();
+        }
+
+        this.dataTableElement.onclick = function (event) {
+            const target = event.target.parentElement;
+
+            if (target.classList.contains('delete-operation-button')) {
+                that.modalButtonDelete.setAttribute('data-id', target.getAttribute('data-id'));
+            }
+        }
+
+        this.modalButtonDelete.onclick = this.deleteOperation.bind(this);
+
+        this.createIncomeElement.onclick = function () {
+            location.href = '#/balance-creating?type=income';
+        }
+
+        this.createExpenseElement.onclick = function () {
+            location.href = '#/balance-creating?type=expense';
         }
 
         await this.processOperation();
@@ -89,7 +144,7 @@ export class Balance {
                     operationNumber.innerText = index + 1;
                     const operationType = document.createElement('div');
                     operationType.classList.add('col-1', 'text-center', 'text-success');
-                    operationType.innerText = operation.type;
+                    operationType.innerText = operation.type === 'income' ? 'доход' : 'расход';
                     const operationCategory = document.createElement('div');
                     operationCategory.classList.add('col-2', 'text-center');
                     operationCategory.innerText = operation.category;
@@ -116,11 +171,11 @@ export class Balance {
                     operationDeleteLinkImage.alt = 'delete';
                     operationDeleteLink.appendChild(operationDeleteLinkImage);
                     const operationEditLink = document.createElement('a');
-                    operationEditLink.href = `#/editing-balance?id=${operation.id}`;
+                    operationEditLink.href = `#/balance-editing?id=${operation.id}`;
                     operationEditLink.classList.add('text-decoration-none', 'edit-operation-button');
                     const operationEditLinkImage = document.createElement('img');
                     operationEditLinkImage.src = 'images/pen-icon.png';
-                    operationDeleteLinkImage.alt = 'edit';
+                    operationEditLinkImage.alt = 'edit';
                     operationEditLink.appendChild(operationEditLinkImage);
                     operationButtonBlock.appendChild(operationDeleteLink);
                     operationButtonBlock.appendChild(operationEditLink);
@@ -140,7 +195,7 @@ export class Balance {
         }
     }
 
-    setButtonPeriodStyle(button) {
+    setButtonPeriodPressedStyle(button) {
         const unStylizedButton = document.querySelector('.btn-secondary');
         unStylizedButton.classList.remove('btn-secondary');
         unStylizedButton.classList.add('btn-outline-secondary');
@@ -158,15 +213,33 @@ export class Balance {
         }
     }
 
-    async setBalance(value) {
+    async deleteOperation() {
+        const id = this.modalButtonDelete.getAttribute('data-id');
         try {
-            const result = await CustomHttp.request(`${pathConfig.host}/balance`, 'PUT', {
-                balance: value
-            });
-            if (result && !result.error) this.balanceElement.innerText = result.balance;
+            const result = await CustomHttp.request(`${pathConfig.host}/operations/${id}`, 'DELETE');
+            if (result && !result.error) {
+                await this.processOperation();
+                return;
+            }
             if (result.error) throw new Error(result.message);
         } catch (error) {
             console.log(error);
         }
     }
+
+    async editOperation() {
+
+    }
+
+    // async setBalance(value) {
+    //     try {
+    //         const result = await CustomHttp.request(`${pathConfig.host}/balance`, 'PUT', {
+    //             balance: value
+    //         });
+    //         if (result && !result.error) this.balanceElement.innerText = result.balance;
+    //         if (result.error) throw new Error(result.message);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 }

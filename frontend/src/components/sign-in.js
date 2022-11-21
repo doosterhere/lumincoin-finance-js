@@ -3,7 +3,7 @@ import PathConfig from "../../config/pathConfig.js"
 import {CustomHttp} from "../services/custom-http.js";
 
 export class SignIn {
-    constructor(view) {
+    constructor(page) {
         const accessToken = localStorage.getItem(Auth.accessTokenKey);
         const isRemember = localStorage.getItem(Auth.userAdditionalInfoKey);
         if (accessToken && isRemember) {
@@ -13,7 +13,7 @@ export class SignIn {
         this.rememberElement = null;
         this.rememberElementText = null;
         this.processElement = null;
-        this.page = view;
+        this.page = page;
         this.fields = [
             {
                 name: 'email',

@@ -3,7 +3,7 @@ import PathConfig from "../../config/pathConfig.js"
 import {CustomHttp} from "../services/custom-http.js";
 
 export class Category {
-    constructor(view) {
+    constructor(category) {
         const accessToken = localStorage.getItem(Auth.accessTokenKey);
         if (!accessToken) {
             location.href = '#/login';
@@ -11,7 +11,7 @@ export class Category {
         }
 
         this.categories = null;
-        this.page = view;
+        this.page = category;
         this.title = null;
         this.requestString = '';
         this.categoriesBlock = null;

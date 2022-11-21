@@ -13,7 +13,7 @@ export class CategoryAction {
 
         this.category = category;
         this.action = action;
-        this.title = null;
+        this.titleElement = null;
         this.editableCategoryValue = null;
         this.requestString = '';
         this.actionElement = null;
@@ -26,17 +26,15 @@ export class CategoryAction {
     }
 
     async init() {
-        this.title = document.getElementById('main-title');
+        const that = this;
+        this.titleElement = document.getElementById('main-title');
         this.actionElement = document.getElementById('button-action');
         this.cancelElement = document.getElementById('button-cancel');
         this.cancelElement.onclick = function () {
             location.href = that.backToLocation;
         }
         this.inputElement = document.getElementById('category-input');
-        const that = this;
-        this.inputElement.oninput = function () {
-            that.validateInput();
-        };
+        this.inputElement.oninput = this.validateInput.bind(this);
 
         if (this.category === 'income') {
             this.requestString = 'categories/income';
@@ -50,34 +48,30 @@ export class CategoryAction {
 
         if (this.action === 'create') {
             this.actionElement.innerText = 'Создать';
-            this.actionElement.onclick = function () {
-                that.createCategory();
-            }
+            this.actionElement.onclick = this.createCategory.bind(this);
         }
 
         if (this.action === 'edit') {
             this.actionElement.innerText = 'Сохранить';
-            this.actionElement.onclick = function () {
-                that.editCategory();
-            }
-            this.inputElement.value = UrlManager.getQueryParams().title;
+            this.actionElement.onclick = this.editCategory.bind(this);
+            this.inputElement.value = this.routeParams.title;
             this.editableCategoryValue = this.inputElement.value;
         }
 
         if (this.category === 'income' && this.action === 'create') {
-            this.title.innerText = 'Создание категории доходов';
+            this.titleElement.innerText = 'Создание категории доходов';
         }
 
         if (this.category === 'income' && this.action === 'edit') {
-            this.title.innerText = 'Редактирование категории доходов';
+            this.titleElement.innerText = 'Редактирование категории доходов';
         }
 
         if (this.category === 'expense' && this.action === 'create') {
-            this.title.innerText = 'Создание категории расходов';
+            this.titleElement.innerText = 'Создание категории расходов';
         }
 
         if (this.category === 'expense' && this.action === 'edit') {
-            this.title.innerText = 'Редактирование категории расходов';
+            this.titleElement.innerText = 'Редактирование категории расходов';
         }
 
     }
@@ -101,7 +95,7 @@ export class CategoryAction {
     }
 
     async editCategory() {
-        const id = UrlManager.getQueryParams().id;
+        const id = this.routeParams.id;
         try {
             const result = await CustomHttp.request(`${PathConfig.host}/${this.requestString}/${id}`, 'PUT', {
                 title: this.inputElement.value
@@ -125,11 +119,7 @@ export class CategoryAction {
             return;
         }
 
-        if (this.action === 'edit') {
-            this.actionElement.classList.remove('disabled');
-        }
-
-        if (this.action === 'create') {
+        if (this.action === 'edit' || this.action === 'create') {
             this.actionElement.classList.remove('disabled');
         }
     }
