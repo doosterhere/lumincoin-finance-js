@@ -1,9 +1,18 @@
 import {CustomHttp} from "../services/custom-http.js";
 import pathConfig from "../../config/pathConfig.js";
+import {Auth} from "../services/auth.js";
+import {Category} from "./category.js";
 
 export class Balance {
     constructor() {
+        const accessToken = localStorage.getItem(Auth.accessTokenKey);
+        if (!accessToken) {
+            location.href = '#/login';
+            return;
+        }
+
         this.period = 'today';
+        this.balanceElement = null;
         this.createIncomeElement = null;
         this.createExpenseElement = null;
         this.periodTodayElement = null;
@@ -20,6 +29,11 @@ export class Balance {
         this.intervalApplyButton = null;
         this.intervalCloseButton = null;
         this.modalButtonDelete = null;
+        this.datepickerElement = jQuery('#datepicker');
+        this.categoriesCount = {
+            incomeCount: 0,
+            expenseCount: 0
+        };
 
         this.init();
     }
@@ -33,6 +47,7 @@ export class Balance {
         this.periodYearElement = document.getElementById('period-year-button');
         this.periodAllElement = document.getElementById('period-all-button');
         this.periodIntervalElement = document.getElementById('period-interval-button');
+        this.balanceElement = document.getElementById('user-balance');
         this.dateFromElement = document.getElementById('date-from');
         this.dateFromInputElement = document.getElementById('date-from-input');
         this.dateToElement = document.getElementById('date-to');
@@ -44,7 +59,7 @@ export class Balance {
         this.createIncomeElement = document.getElementById('button-create-income');
         this.createExpenseElement = document.getElementById('button-create-expense');
 
-        jQuery('#datepicker').datepicker({
+        this.datepickerElement.datepicker({
             format: "yyyy-mm-dd",
             weekStart: 1,
             endDate: "0d",
@@ -53,6 +68,11 @@ export class Balance {
             language: "ru",
             todayHighlight: true
         });
+
+        await Category.getCategories('categories/income').then(result => this.categoriesCount.incomeCount = result.length);
+        await Category.getCategories('categories/expense').then(result => this.categoriesCount.expenseCount = result.length);
+        if (!this.categoriesCount.incomeCount) this.createIncomeElement.setAttribute('disabled', 'disabled');
+        if (!this.categoriesCount.expenseCount) this.createExpenseElement.setAttribute('disabled', 'disabled');
 
         const that = this;
         this.periodTodayElement.onclick = function () {
@@ -88,7 +108,7 @@ export class Balance {
         this.periodIntervalElement.onclick = this.setButtonPeriodPressedStyle.bind(this, this.periodIntervalElement);
 
         this.intervalCloseButton.onclick = function () {
-            jQuery('#datepicker').datepicker('clearDates');
+            that.datepickerElement.datepicker('clearDates');
         }
 
         this.dateFromInputElement.focusout = this.dateToInputElement.focusout = function () {
@@ -102,7 +122,7 @@ export class Balance {
         this.intervalApplyButton.onclick = function () {
             that.dateFromElement.innerText = that.dateFromInputElement.value;
             that.dateToElement.innerText = that.dateToInputElement.value;
-            jQuery('#datepicker').datepicker('clearDates');
+            that.datepickerElement.datepicker('clearDates');
             that.period = `interval&dateFrom=${that.dateFromElement.innerText}&dateTo=${that.dateToElement.innerText}`;
             that.processOperation();
         }
@@ -217,6 +237,8 @@ export class Balance {
             const result = await CustomHttp.request(`${pathConfig.host}/operations/${id}`, 'DELETE');
             if (result && !result.error) {
                 await this.processOperation();
+                Balance.getBalance().then(balance => this.balanceElement.innerText = balance + '$');
+                console.log(result.message);
                 return;
             }
             if (result.error) throw new Error(result.message);

@@ -49,19 +49,21 @@ export class Category {
             this.modalHeaderSpan.innerText = this.categoryType.toLowerCase();
         }
 
+        await Category.getCategories(this.requestString).then(result => this.categories = result);
+
+        this.processCategories();
+    }
+
+    static async getCategories(urlParam) {
         try {
-            const result = await CustomHttp.request(`${PathConfig.host}/${this.requestString}`);
-            if (result && !result.error) {
-                this.categories = result;
-            }
+            const result = await CustomHttp.request(`${PathConfig.host}/${urlParam}`);
+            if (result && !result.error) return result;
             if (result.error) {
                 throw new Error(result.message);
             }
         } catch (error) {
             console.log(error);
         }
-
-        this.processCategories();
     }
 
     processCategories() {

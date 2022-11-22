@@ -152,7 +152,7 @@ export class BalanceAction {
     }
 
     validateFields() {
-        if (!this.amountElement.value.match(/^\d+\.?\d*$/)) {
+        if (!this.amountElement.value) {
             this.amountElement.classList.add('border-danger');
             this.actionElement.setAttribute('disabled', 'disabled');
             return;
@@ -167,8 +167,8 @@ export class BalanceAction {
         this.dateElement.classList.remove('border-danger');
 
         if (this.action === 'edit') {
-            const isInvalid = this.fields.every(field => field.initialData === document.getElementById(field.id).value);
-            if (isInvalid) {
+            const thereAreNoChanges = this.fields.every(field => field.initialData === document.getElementById(field.id).value);
+            if (thereAreNoChanges) {
                 this.actionElement.setAttribute('disabled', 'disabled');
                 return;
             }
@@ -197,7 +197,7 @@ export class BalanceAction {
                 type: this.operationData.type,
                 amount: Number(this.amountElement.value),
                 date: this.dateElement.value,
-                comment: this.commentElement.value,
+                comment: this.commentElement.value === '' ? ' ' : this.commentElement.value,
                 category_id: Number(operation.id)
             });
 

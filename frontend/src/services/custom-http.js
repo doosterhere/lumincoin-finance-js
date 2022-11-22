@@ -18,6 +18,7 @@ export class CustomHttp {
         }
 
         let response = {};
+
         await fetch(url, params)
             .then(res => {
                 response = res;
@@ -36,7 +37,6 @@ export class CustomHttp {
             }
             throw new Error(response.message);
         }
-
         return await response.json();
     }
 }
