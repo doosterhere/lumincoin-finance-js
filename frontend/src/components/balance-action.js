@@ -54,7 +54,7 @@ export class BalanceAction {
 
     async init() {
         this.datepickerElement.datepicker({
-            format: "yyyy-mm-dd",
+            format: "dd.mm.yyyy",
             weekStart: 1,
             endDate: "0d",
             todayBtn: "linked",
@@ -84,7 +84,7 @@ export class BalanceAction {
             this.processCategoriesList();
             this.categoryElement.value = this.operationData.category;
             this.amountElement.value = this.operationData.amount;
-            this.dateElement.value = this.operationData.date;
+            this.dateElement.value = this.operationData.date.split('-').reverse().join('.');
             this.commentElement.value = this.operationData.comment;
             this.requestString = `operations/${this.operationData.id}`;
             this.method = 'PUT';
@@ -196,8 +196,8 @@ export class BalanceAction {
             const result = await CustomHttp.request(`${pathConfig.host}/${this.requestString}`, this.method, {
                 type: this.operationData.type,
                 amount: Number(this.amountElement.value),
-                date: this.dateElement.value,
-                comment: this.commentElement.value === '' ? ' ' : this.commentElement.value,
+                date: this.dateElement.value.split('.').reverse().join('-'),
+                comment: this.commentElement.value === '' ? '...' : this.commentElement.value,
                 category_id: Number(operation.id)
             });
 

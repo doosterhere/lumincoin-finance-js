@@ -2,6 +2,7 @@ import {CustomHttp} from "../services/custom-http.js";
 import pathConfig from "../../config/pathConfig.js";
 import {Auth} from "../services/auth.js";
 import {Category} from "./category.js";
+import {Intervals} from "../utils/intervals.js";
 
 export class Balance {
     constructor() {
@@ -11,7 +12,7 @@ export class Balance {
             return;
         }
 
-        this.period = 'today';
+        this.period = '';
         this.balanceElement = null;
         this.createIncomeElement = null;
         this.createExpenseElement = null;
@@ -34,6 +35,7 @@ export class Balance {
             incomeCount: 0,
             expenseCount: 0
         };
+        this.Intervals = new Intervals();
 
         this.init();
     }
@@ -41,8 +43,8 @@ export class Balance {
     async init() {
         this.createIncomeElement = document.getElementById('button-create-income');
         this.createExpenseElement = document.getElementById('button-create-expense');
-        this.periodTodayElement = document.getElementById('period-today-button');
         this.periodWeekElement = document.getElementById('period-week-button');
+        this.periodTodayElement = document.getElementById('period-today-button');
         this.periodMonthElement = document.getElementById('period-month-button');
         this.periodYearElement = document.getElementById('period-year-button');
         this.periodAllElement = document.getElementById('period-all-button');
@@ -60,7 +62,7 @@ export class Balance {
         this.createExpenseElement = document.getElementById('button-create-expense');
 
         this.datepickerElement.datepicker({
-            format: "yyyy-mm-dd",
+            format: "dd.mm.yyyy",
             weekStart: 1,
             endDate: "0d",
             todayBtn: "linked",
@@ -78,30 +80,40 @@ export class Balance {
         this.periodTodayElement.onclick = function () {
             that.setButtonPeriodPressedStyle(this);
             that.period = 'today';
+            that.dateFromElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
+            that.dateToElement.innerText = that.dateFromElement.innerText;
             that.processOperation();
         }
 
         this.periodWeekElement.onclick = function () {
             that.setButtonPeriodPressedStyle(this);
             that.period = 'week';
+            that.dateFromElement.innerText = `${that.Intervals.week.day}.${that.Intervals.week.month}.${that.Intervals.week.year}`;
+            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
             that.processOperation();
         }
 
         this.periodMonthElement.onclick = function () {
             that.setButtonPeriodPressedStyle(this);
             that.period = 'month';
+            that.dateFromElement.innerText = `${that.Intervals.month.day}.${that.Intervals.month.month}.${that.Intervals.month.year}`;
+            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
             that.processOperation();
         }
 
         this.periodYearElement.onclick = function () {
             that.setButtonPeriodPressedStyle(this);
             that.period = 'year';
+            that.dateFromElement.innerText = `${that.Intervals.year.day}.${that.Intervals.year.month}.${that.Intervals.year.year}`;
+            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
             that.processOperation();
         }
 
         this.periodAllElement.onclick = function () {
             that.setButtonPeriodPressedStyle(this);
             that.period = 'all';
+            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
+            that.dateFromElement.innerText = that.Intervals.theFirstOperationDate;
             that.processOperation();
         }
 
@@ -123,7 +135,9 @@ export class Balance {
             that.dateFromElement.innerText = that.dateFromInputElement.value;
             that.dateToElement.innerText = that.dateToInputElement.value;
             that.datepickerElement.datepicker('clearDates');
-            that.period = `interval&dateFrom=${that.dateFromElement.innerText}&dateTo=${that.dateToElement.innerText}`;
+            const dateFrom = that.dateFromElement.innerText.split('.').reverse().join('-');
+            const dateTo = that.dateToElement.innerText.split('.').reverse().join('-');
+            that.period = `interval&dateFrom=${dateFrom}&dateTo=${dateTo}`;
             that.processOperation();
         }
 
@@ -145,7 +159,7 @@ export class Balance {
             location.href = '#/balance-creating?type=expense';
         }
 
-        await this.processOperation();
+        this.periodTodayElement.onclick();
     }
 
     async processOperation() {
@@ -171,7 +185,7 @@ export class Balance {
                     operationAmount.innerText = operation.amount;
                     const operationDate = document.createElement('div');
                     operationDate.classList.add('col-2', 'text-center');
-                    operationDate.innerText = operation.date;
+                    operationDate.innerText = operation.date.split('-').reverse().join('.');
                     const operationComment = document.createElement('div');
                     operationComment.classList.add('col-3', 'text-center');
                     operationComment.innerText = operation.comment;

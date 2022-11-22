@@ -1,7 +1,6 @@
-// noinspection DuplicatedCode
-
 import ChartConfig from "../../config/chartConfig.js";
 import {Auth} from "../services/auth.js";
+import {Intervals} from "../utils/intervals.js";
 
 export class Main {
     constructor() {
@@ -12,10 +11,10 @@ export class Main {
         }
 
         this.period = 'today';
-        this.periodTodayElement = null;
         this.periodWeekElement = null;
-        this.periodMonthElement = null;
+        this.periodTodayElement = null;
         this.periodYearElement = null;
+        this.periodMonthElement = null;
         this.periodAllElement = null;
         this.periodIntervalElement = null;
         this.dateFromElement = null;
@@ -25,6 +24,7 @@ export class Main {
         this.intervalApplyButton = null;
         this.intervalCloseButton = null;
         this.datepickerElement = jQuery('#datepicker');
+        this.Intervals = new Intervals();
 
         this.init();
     }
@@ -44,7 +44,7 @@ export class Main {
         this.intervalCloseButton = document.getElementById('modal-button-datepicker-close');
 
         this.datepickerElement.datepicker({
-            format: "yyyy-mm-dd",
+            format: "dd.mm.yyyy",
             weekStart: 1,
             endDate: "0d",
             todayBtn: "linked",
@@ -57,31 +57,41 @@ export class Main {
         this.periodTodayElement.onclick = function () {
             that.setButtonPeriodPressedStyle(this);
             that.period = 'today';
-            // that.processOperation();
+            that.dateFromElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
+            that.dateToElement.innerText = that.dateFromElement.innerText;
+            that.processOperation();
         }
 
         this.periodWeekElement.onclick = function () {
             that.setButtonPeriodPressedStyle(this);
             that.period = 'week';
-            // that.processOperation();
+            that.dateFromElement.innerText = `${that.Intervals.week.day}.${that.Intervals.week.month}.${that.Intervals.week.year}`;
+            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
+            that.processOperation();
         }
 
         this.periodMonthElement.onclick = function () {
             that.setButtonPeriodPressedStyle(this);
             that.period = 'month';
-            // that.processOperation();
+            that.dateFromElement.innerText = `${that.Intervals.month.day}.${that.Intervals.month.month}.${that.Intervals.month.year}`;
+            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
+            that.processOperation();
         }
 
         this.periodYearElement.onclick = function () {
             that.setButtonPeriodPressedStyle(this);
             that.period = 'year';
-            // that.processOperation();
+            that.dateFromElement.innerText = `${that.Intervals.year.day}.${that.Intervals.year.month}.${that.Intervals.year.year}`;
+            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
+            that.processOperation();
         }
 
         this.periodAllElement.onclick = function () {
             that.setButtonPeriodPressedStyle(this);
             that.period = 'all';
-            // that.processOperation();
+            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
+            that.dateFromElement.innerText = that.Intervals.theFirstOperationDate;
+            that.processOperation();
         }
 
         this.periodIntervalElement.onclick = this.setButtonPeriodPressedStyle.bind(this, this.periodIntervalElement);
@@ -103,8 +113,10 @@ export class Main {
             that.dateToElement.innerText = that.dateToInputElement.value;
             that.datepickerElement.datepicker('clearDates');
             that.period = `interval&dateFrom=${that.dateFromElement.innerText}&dateTo=${that.dateToElement.innerText}`;
-            // that.processOperation();
+            that.processOperation();
         }
+
+        this.periodTodayElement.onclick();
     }
 
     setButtonPeriodPressedStyle(button) {
@@ -113,5 +125,9 @@ export class Main {
         unStylizedButton.classList.add('btn-outline-secondary');
         button.classList.remove('btn-outline-secondary');
         button.classList.add('btn-secondary');
+    }
+
+    processOperation() {
+
     }
 }
