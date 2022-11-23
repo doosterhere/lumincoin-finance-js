@@ -38,7 +38,7 @@ export class Intervals {
         try {
             const result = await CustomHttp.request(`${pathConfig.host}/operations?period=all`);
             if (result.error) throw new Error(result.message);
-            if (result && !result.error) {
+            if (result && !result.error && Object.keys(result).length) {
                 result.forEach(operation => this.operationsDates.push(operation.date));
                 this.theFirstOperationDate = this.operationsDates.sort((a, b) => {
                     return new Date(a) - new Date(b)

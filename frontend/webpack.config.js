@@ -28,7 +28,6 @@ module.exports = {
                 {from: "node_modules/bootstrap-datepicker/dist/js", to: "datepicker/js"},
                 {from: "node_modules/bootstrap-datepicker/dist/locales", to: "datepicker/locales"},
                 {from: "node_modules/bootstrap-datepicker/dist/css", to: "datepicker/css"},
-                {from: "node_modules/chart.js/dist", to: "chart.js/dist"}
             ],
         }),
     ],

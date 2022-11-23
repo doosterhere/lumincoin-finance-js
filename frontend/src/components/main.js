@@ -1,6 +1,9 @@
 import ChartConfig from "../../config/chartConfig.js";
 import {Auth} from "../services/auth.js";
-import {Intervals} from "../utils/intervals.js";
+import {CustomHttp} from "../services/custom-http.js";
+import pathConfig from "../../config/pathConfig.js";
+import {IntervalControls} from "./interval-controls.js";
+import Chart from "chart.js/auto";
 
 export class Main {
     constructor() {
@@ -10,124 +13,58 @@ export class Main {
             return;
         }
 
-        this.period = 'today';
-        this.periodWeekElement = null;
-        this.periodTodayElement = null;
-        this.periodYearElement = null;
-        this.periodMonthElement = null;
-        this.periodAllElement = null;
-        this.periodIntervalElement = null;
-        this.dateFromElement = null;
-        this.dateFromInputElement = null;
-        this.dateToElement = null;
-        this.dateToInputElement = null;
-        this.intervalApplyButton = null;
-        this.intervalCloseButton = null;
-        this.datepickerElement = jQuery('#datepicker');
-        this.Intervals = new Intervals();
+        this.myChartIncomeElement = null;
+        this.myChartExpenseElement = null;
+        this.incomesChart = null;
+        this.expensesChart = null;
 
         this.init();
     }
 
     async init() {
-        this.periodTodayElement = document.getElementById('period-today-button');
-        this.periodWeekElement = document.getElementById('period-week-button');
-        this.periodMonthElement = document.getElementById('period-month-button');
-        this.periodYearElement = document.getElementById('period-year-button');
-        this.periodAllElement = document.getElementById('period-all-button');
-        this.periodIntervalElement = document.getElementById('period-interval-button');
-        this.dateFromElement = document.getElementById('date-from');
-        this.dateFromInputElement = document.getElementById('date-from-input');
-        this.dateToElement = document.getElementById('date-to');
-        this.dateToInputElement = document.getElementById('date-to-input');
-        this.intervalApplyButton = document.getElementById('modal-button-datepicker-apply');
-        this.intervalCloseButton = document.getElementById('modal-button-datepicker-close');
+        this.myChartIncomeElement = document.getElementById('chart-incomes');
+        this.myChartExpenseElement = document.getElementById('chart-expenses');
 
-        this.datepickerElement.datepicker({
-            format: "dd.mm.yyyy",
-            weekStart: 1,
-            endDate: "0d",
-            todayBtn: "linked",
-            clearBtn: true,
-            language: "ru",
-            todayHighlight: true
-        });
+        this.IntervalControls = new IntervalControls(this.processOperation, this);
 
-        const that = this;
-        this.periodTodayElement.onclick = function () {
-            that.setButtonPeriodPressedStyle(this);
-            that.period = 'today';
-            that.dateFromElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
-            that.dateToElement.innerText = that.dateFromElement.innerText;
-            that.processOperation();
-        }
+        this.incomesChart = new Chart(this.myChartIncomeElement, null);
+        this.expensesChart = new Chart(this.myChartExpenseElement, null);
 
-        this.periodWeekElement.onclick = function () {
-            that.setButtonPeriodPressedStyle(this);
-            that.period = 'week';
-            that.dateFromElement.innerText = `${that.Intervals.week.day}.${that.Intervals.week.month}.${that.Intervals.week.year}`;
-            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
-            that.processOperation();
-        }
+        this.IntervalControls.periodTodayElement.onclick();
+    }
 
-        this.periodMonthElement.onclick = function () {
-            that.setButtonPeriodPressedStyle(this);
-            that.period = 'month';
-            that.dateFromElement.innerText = `${that.Intervals.month.day}.${that.Intervals.month.month}.${that.Intervals.month.year}`;
-            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
-            that.processOperation();
-        }
+    async processOperation(context) {
+        const incomesConfig = structuredClone(ChartConfig.config);
+        const expensesConfig = structuredClone(ChartConfig.config);
+        incomesConfig.data.datasets[0].label = 'Доходы';
+        expensesConfig.data.datasets[0].label = 'Расходы';
+        context.incomesChart.destroy();
+        context.expensesChart.destroy();
 
-        this.periodYearElement.onclick = function () {
-            that.setButtonPeriodPressedStyle(this);
-            that.period = 'year';
-            that.dateFromElement.innerText = `${that.Intervals.year.day}.${that.Intervals.year.month}.${that.Intervals.year.year}`;
-            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
-            that.processOperation();
-        }
+        try {
+            const result = await CustomHttp.request(`${pathConfig.host}/operations?period=${this.period}`);
+            if (result.error) throw new Error(result.message);
+            if (result && !result.error) {
+                result.forEach(operation => {
+                    let currentConfig = null;
+                    if (operation.type === 'income') currentConfig = incomesConfig;
+                    if (operation.type === 'expense') currentConfig = expensesConfig;
 
-        this.periodAllElement.onclick = function () {
-            that.setButtonPeriodPressedStyle(this);
-            that.period = 'all';
-            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
-            that.dateFromElement.innerText = that.Intervals.theFirstOperationDate;
-            that.processOperation();
-        }
+                    if (currentConfig && !currentConfig.data.labels.some(label => label === operation.category)) {
+                        currentConfig.data.labels.push(operation.category);
+                        const index = currentConfig.data.labels.indexOf(operation.category);
+                        currentConfig.data.datasets[0].data[index] = 0;
+                    }
 
-        this.periodIntervalElement.onclick = this.setButtonPeriodPressedStyle.bind(this, this.periodIntervalElement);
+                    const index = currentConfig.data.labels.indexOf(operation.category);
+                    currentConfig.data.datasets[0].data[index] += operation.amount;
+                });
 
-        this.intervalCloseButton.onclick = function () {
-            that.datepickerElement.datepicker('clearDates');
-        }
-
-        this.dateFromInputElement.focusout = this.dateToInputElement.focusout = function () {
-            if (event.target.value === '') {
-                that.intervalApplyButton.setAttribute('disabled', 'disabled');
-                return;
+                context.incomesChart = new Chart(context.myChartIncomeElement, incomesConfig);
+                context.expensesChart = new Chart(context.myChartExpenseElement, expensesConfig);
             }
-            that.intervalApplyButton.removeAttribute('disabled');
+        } catch (error) {
+            console.log(error);
         }
-
-        this.intervalApplyButton.onclick = function () {
-            that.dateFromElement.innerText = that.dateFromInputElement.value;
-            that.dateToElement.innerText = that.dateToInputElement.value;
-            that.datepickerElement.datepicker('clearDates');
-            that.period = `interval&dateFrom=${that.dateFromElement.innerText}&dateTo=${that.dateToElement.innerText}`;
-            that.processOperation();
-        }
-
-        this.periodTodayElement.onclick();
-    }
-
-    setButtonPeriodPressedStyle(button) {
-        const unStylizedButton = document.querySelector('.btn-secondary');
-        unStylizedButton.classList.remove('btn-secondary');
-        unStylizedButton.classList.add('btn-outline-secondary');
-        button.classList.remove('btn-outline-secondary');
-        button.classList.add('btn-secondary');
-    }
-
-    processOperation() {
-
     }
 }

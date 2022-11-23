@@ -74,7 +74,10 @@ class CategoryExpenseController {
                 .json({error: true, message: "ID parameter should be passed"});
         }
         CategoryExpenseModel.delete({id: parseInt(id), user_id: req.body.user.id});
-        OperationModel.delete({category_expense_id: parseInt(id), user_id: req.body.user.id});
+        OperationModel.update({
+            category_expense_id: parseInt(id),
+            user_id: req.body.user.id
+        }, {category_expense_id: null});
         res.json({
             error: false,
             message: 'Removed successfully'

@@ -5,6 +5,7 @@ export class Auth {
     static refreshTokenKey = 'refreshToken';
     static userInfoKey = 'userInfo';
     static userAdditionalInfoKey = 'userAdditionalInfo';
+    static catListStateKey = 'catListState';
 
     static async processUnauthorizedResponse() {
         const refreshToken = localStorage.getItem(this.refreshTokenKey);
@@ -50,6 +51,7 @@ export class Auth {
                     this.removeTokens();
                     this.removeUserInfo();
                     this.removeAdditionalUserInfo();
+                    this.removeCatListState();
                     return true;
                 }
             }
@@ -92,5 +94,9 @@ export class Auth {
 
     static removeAdditionalUserInfo() {
         localStorage.removeItem(this.userAdditionalInfoKey);
+    }
+
+    static removeCatListState() {
+        localStorage.removeItem(this.catListStateKey);
     }
 }
