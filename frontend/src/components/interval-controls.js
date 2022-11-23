@@ -3,10 +3,7 @@ import {Intervals} from "../utils/intervals.js";
 export class IntervalControls {
     constructor(externalProcessFunction, externalContext) {
         this.period = '';
-        this.periodWeekElement = null;
         this.periodTodayElement = null;
-        this.periodYearElement = null;
-        this.periodMonthElement = null;
         this.periodAllElement = null;
         this.periodIntervalElement = null;
         this.dateFromElement = null;
@@ -25,9 +22,6 @@ export class IntervalControls {
 
     init() {
         this.periodTodayElement = document.getElementById('period-today-button');
-        this.periodWeekElement = document.getElementById('period-week-button');
-        this.periodMonthElement = document.getElementById('period-month-button');
-        this.periodYearElement = document.getElementById('period-year-button');
         this.periodAllElement = document.getElementById('period-all-button');
         this.periodIntervalElement = document.getElementById('period-interval-button');
         this.dateFromElement = document.getElementById('date-from');
