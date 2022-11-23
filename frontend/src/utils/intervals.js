@@ -6,9 +6,9 @@ export class Intervals {
         this.operationsDates = [];
         this.theFirstOperationDate = null;
         this.today = {
-            year: new Date(new Date().toLocaleDateString()).getFullYear(),
-            month: new Date(new Date().toLocaleDateString()).getMonth() + 1,
-            day: new Date(new Date().toLocaleDateString()).getDate(),
+            year: new Date().getFullYear(),
+            month: new Date().getMonth() + 1,
+            day: new Date().getDate(),
         }
         this.oneWeekAgo = new Date(new Date().setDate(new Date().getDate() - 7));
         this.week = {

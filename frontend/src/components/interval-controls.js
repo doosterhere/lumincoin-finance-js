@@ -18,6 +18,7 @@ export class IntervalControls {
         this.datepickerElement = jQuery('#datepicker');
         this.externalProcessFunction = externalProcessFunction;
         this.externalContext = externalContext;
+        this.buttonsBlock = null;
 
         this.init();
     }
@@ -35,6 +36,7 @@ export class IntervalControls {
         this.dateToInputElement = document.getElementById('date-to-input');
         this.intervalApplyButton = document.getElementById('modal-button-datepicker-apply');
         this.intervalCloseButton = document.getElementById('modal-button-datepicker-close');
+        this.buttonsBlock = document.querySelector('.filter-buttons');
         this.Intervals = new Intervals();
 
         this.datepickerElement.datepicker({
@@ -48,44 +50,20 @@ export class IntervalControls {
         });
 
         const that = this;
-        this.periodTodayElement.onclick = function () {
-            that.setButtonPeriodPressedStyle(this);
-            that.period = 'today';
-            that.dateFromElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
-            that.dateToElement.innerText = that.dateFromElement.innerText;
-            that.externalProcessFunction(that.externalContext);
-        }
 
-        this.periodWeekElement.onclick = function () {
-            that.setButtonPeriodPressedStyle(this);
-            that.period = 'week';
-            that.dateFromElement.innerText = `${that.Intervals.week.day}.${that.Intervals.week.month}.${that.Intervals.week.year}`;
-            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
-            that.externalProcessFunction(that.externalContext);
-        }
+        this.buttonsBlock.onclick = function () {
+            if (event.target.hasAttribute('data-period')) {
+                that.setButtonPeriodPressedStyle(event.target);
+                that.period = event.target.getAttribute('data-period');
+                that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
 
-        this.periodMonthElement.onclick = function () {
-            that.setButtonPeriodPressedStyle(this);
-            that.period = 'month';
-            that.dateFromElement.innerText = `${that.Intervals.month.day}.${that.Intervals.month.month}.${that.Intervals.month.year}`;
-            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
-            that.externalProcessFunction(that.externalContext);
-        }
+                if (event.target !== that.periodAllElement)
+                    that.dateFromElement.innerText = `${that.Intervals[that.period].day}.${that.Intervals[that.period].month}.${that.Intervals[that.period].year}`;
+                if (event.target === that.periodAllElement)
+                    that.dateFromElement.innerText = that.Intervals.theFirstOperationDate;
 
-        this.periodYearElement.onclick = function () {
-            that.setButtonPeriodPressedStyle(this);
-            that.period = 'year';
-            that.dateFromElement.innerText = `${that.Intervals.year.day}.${that.Intervals.year.month}.${that.Intervals.year.year}`;
-            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
-            that.externalProcessFunction(that.externalContext);
-        }
-
-        this.periodAllElement.onclick = function () {
-            that.setButtonPeriodPressedStyle(this);
-            that.period = 'all';
-            that.dateToElement.innerText = `${that.Intervals.today.day}.${that.Intervals.today.month}.${that.Intervals.today.year}`;
-            that.dateFromElement.innerText = that.Intervals.theFirstOperationDate;
-            that.externalProcessFunction(that.externalContext);
+                that.externalProcessFunction(that.externalContext);
+            }
         }
 
         this.periodIntervalElement.onclick = this.setButtonPeriodPressedStyle.bind(this, this.periodIntervalElement);

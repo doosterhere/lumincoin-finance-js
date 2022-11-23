@@ -27,7 +27,6 @@ export class Category {
         const that = this;
         this.title = document.getElementById('main-title');
         this.categoriesBlock = document.getElementById('categories');
-        this.addCategoryElement = document.getElementById('add-category');
         this.modalHeaderSpan = document.querySelector('.modal-header span');
         this.modalButtonDelete = document.getElementById('modal-button-delete');
         this.modalButtonDelete.onclick = function () {
@@ -38,20 +37,18 @@ export class Category {
             this.categoryType = 'Доходы';
             this.title.innerText = this.categoryType;
             this.requestString = 'categories/income';
-            this.addCategoryElement.setAttribute('href', '#/income-creating');
             this.modalHeaderSpan.innerText = this.categoryType.toLowerCase();
         }
         if (this.page === 'expenses') {
             this.categoryType = 'Расходы';
             this.title.innerText = this.categoryType;
             this.requestString = 'categories/expense';
-            this.addCategoryElement.setAttribute('href', '#/expense-creating');
             this.modalHeaderSpan.innerText = this.categoryType.toLowerCase();
         }
 
-        await Category.getCategories(this.requestString).then(result => this.categories = result);
+        //await Category.getCategories(this.requestString).then(result => this.categories = result);
 
-        this.processCategories();
+        await this.processCategories();
     }
 
     static async getCategories(urlParam) {
@@ -66,7 +63,30 @@ export class Category {
         }
     }
 
-    processCategories() {
+    processAddCategoryElement() {
+        const addCategoryElement = document.createElement('div');
+        addCategoryElement.classList.add('rounded-3', 'border', 'border-1', 'border-secondary', 'border-opacity-50');
+        addCategoryElement.setAttribute('id', 'add-category-block');
+
+        const addCategoryLinkElement = document.createElement('a');
+        addCategoryLinkElement.href = this.page === 'incomes' ? '#/income-creating' : '#/expense-creating';
+        addCategoryLinkElement.classList.add('d-flex', 'w-100', 'h-100', 'flex-grow-1', 'align-items-center', 'justify-content-center');
+        addCategoryLinkElement.setAttribute('id', 'add-category');
+
+        const addCategoryImageElement = document.createElement('img');
+        addCategoryImageElement.setAttribute('src', 'images/+.png');
+
+        addCategoryLinkElement.appendChild(addCategoryImageElement);
+        addCategoryElement.appendChild(addCategoryLinkElement);
+        this.categoriesBlock.appendChild(addCategoryElement);
+
+        this.addCategoryElement = document.getElementById('add-category');
+    }
+
+    async processCategories() {
+        await Category.getCategories(this.requestString).then(result => this.categories = result);
+
+        this.categoriesBlock.innerHTML = '';
         if (Object.keys(this.categories).length) {
             this.categories.forEach(card => {
                 const categoryElement = document.createElement('div');
@@ -94,9 +114,6 @@ export class Category {
                 this.categoriesBlock.appendChild(categoryElement);
             });
 
-            const addCategoryElement = document.getElementById('add-category-block');
-            this.categoriesBlock.appendChild(addCategoryElement);
-
             const that = this;
             this.categoriesBlock.onclick = function (event) {
                 let target = event.target;
@@ -113,6 +130,7 @@ export class Category {
                 }
             }
         }
+        this.processAddCategoryElement();
     }
 
     async deleteCategory() {
@@ -120,8 +138,7 @@ export class Category {
         try {
             const result = await CustomHttp.request(`${PathConfig.host}/${this.requestString}/${id}`, 'DELETE');
             if (result && !result.error) {
-                location.reload();
-                return;
+                await this.processCategories();
             }
             if (result.error) {
                 throw new Error(result.message);

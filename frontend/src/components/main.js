@@ -30,12 +30,13 @@ export class Main {
         this.incomesChart = new Chart(this.myChartIncomeElement, null);
         this.expensesChart = new Chart(this.myChartExpenseElement, null);
 
-        this.IntervalControls.periodTodayElement.onclick();
+        this.IntervalControls.periodTodayElement.dispatchEvent(new Event('click', {bubbles: true}));
     }
 
     async processOperation(context) {
         const incomesConfig = structuredClone(ChartConfig.config);
         const expensesConfig = structuredClone(ChartConfig.config);
+        expensesConfig.data.datasets[0].backgroundColor.reverse();
         incomesConfig.data.datasets[0].label = 'Доходы';
         expensesConfig.data.datasets[0].label = 'Расходы';
         context.incomesChart.destroy();
@@ -50,13 +51,16 @@ export class Main {
                     if (operation.type === 'income') currentConfig = incomesConfig;
                     if (operation.type === 'expense') currentConfig = expensesConfig;
 
-                    if (currentConfig && !currentConfig.data.labels.some(label => label === operation.category)) {
-                        currentConfig.data.labels.push(operation.category);
-                        const index = currentConfig.data.labels.indexOf(operation.category);
+                    if (currentConfig && !currentConfig.data.labels.some(label => (label === operation.category || !operation.category))) {
+                        if (operation.category) currentConfig.data.labels.push(operation.category);
+                        if (!operation.category) currentConfig.data.labels.push('удалённые категории');
+                        const index = operation.category ? currentConfig.data.labels.indexOf(operation.category)
+                            : currentConfig.data.labels.indexOf('удалённые категории');
                         currentConfig.data.datasets[0].data[index] = 0;
                     }
 
-                    const index = currentConfig.data.labels.indexOf(operation.category);
+                    const index = operation.category ? currentConfig.data.labels.indexOf(operation.category)
+                        : currentConfig.data.labels.indexOf('удалённые категории');
                     currentConfig.data.datasets[0].data[index] += operation.amount;
                 });
 

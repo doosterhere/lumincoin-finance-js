@@ -58,7 +58,7 @@ export class Balance {
             location.href = '#/balance-creating?type=expense';
         }
 
-        this.IntervalControls.periodTodayElement.onclick();
+        this.IntervalControls.periodTodayElement.dispatchEvent(new Event('click', {bubbles: true}));
     }
 
     async processOperation(context) {
@@ -74,11 +74,12 @@ export class Balance {
                     operationNumber.classList.add('col-2', 'text-center', 'fw-bold');
                     operationNumber.innerText = index + 1;
                     const operationType = document.createElement('div');
-                    operationType.classList.add('col-1', 'text-center', 'text-success');
+                    const operationColorByType = operation.type === 'income' ? 'text-success' : operation.type === 'expense' ? 'text-danger' : 'text-secondary';
+                    operationType.classList.add('col-1', 'text-center', operationColorByType);
                     operationType.innerText = operation.type === 'income' ? 'доход' : 'расход';
                     const operationCategory = document.createElement('div');
                     operationCategory.classList.add('col-2', 'text-center');
-                    operationCategory.innerText = operation.category;
+                    operationCategory.innerText = operation.category ? operation.category : '—';
                     const operationAmount = document.createElement('div');
                     operationAmount.classList.add('col-1', 'text-center');
                     operationAmount.innerText = operation.amount;
@@ -141,7 +142,7 @@ export class Balance {
         try {
             const result = await CustomHttp.request(`${pathConfig.host}/operations/${id}`, 'DELETE');
             if (result && !result.error) {
-                await this.processOperation();
+                await this.processOperation(this);
                 Balance.getBalance().then(balance => this.balanceElement.innerText = balance + '$');
                 console.log(result.message);
                 return;
