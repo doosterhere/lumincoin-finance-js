@@ -1,12 +1,13 @@
 {
-  "name": "frontend",
+  "name": "lumincoin",
   "version": "1.0.0",
   "description": "Lumincoin finance",
   "main": "src/app.js",
   "scripts": {
     "start": "http-server ./dist",
-    "build": "webpack",
-    "dev": "webpack serve --open"
+    "build": "webpack --mode=development",
+    "dev": "webpack serve --open",
+    "build-gp": "webpack --mode=production"
   },
   "keywords": [],
   "author": "",
