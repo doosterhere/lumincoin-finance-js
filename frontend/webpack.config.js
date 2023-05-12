@@ -48,6 +48,11 @@ module.exports = (env, argv) => {
                     { from: "node_modules/bootstrap-datepicker/dist/css", to: "datepicker/css" },
                 ],
             })
-        ]
+        ],
+        devServer: {
+            static: ".dist",
+            compress: true,
+            port: 9000,
+        },
     };
 };

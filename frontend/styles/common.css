@@ -94,3 +94,7 @@ input[type="checkbox"] {
 .data-table .row {
     min-height: 50px;
 }
+
+.tip {
+    font-size: 13px;
+}

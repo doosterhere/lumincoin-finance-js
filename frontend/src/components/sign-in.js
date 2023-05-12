@@ -1,6 +1,6 @@
-import {Auth} from "../services/auth.js";
+import { Auth } from "../services/auth.js";
 import PathConfig from "../../config/pathConfig.js"
-import {CustomHttp} from "../services/custom-http.js";
+import { CustomHttp } from "../services/custom-http.js";
 
 export class SignIn {
     constructor(page) {
@@ -26,7 +26,7 @@ export class SignIn {
                 name: 'password',
                 id: 'input-password',
                 element: null,
-                regex: /^(?=.*\d)(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+                regex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
                 valid: false
             }
         ];
@@ -84,16 +84,22 @@ export class SignIn {
     validateField(field, element) {
         if (!element.value || !element.value.match(field.regex)) {
             element.classList.add('border-danger');
+            element.nextElementSibling.classList.remove('d-none');
+            element.nextElementSibling.classList.add('d-block');
             field.valid = false;
         }
 
         if (element.value && element.value.match(field.regex)) {
             element.classList.remove('border-danger');
+            element.nextElementSibling.classList.add('d-none');
+            element.nextElementSibling.classList.remove('d-block');
             field.valid = true;
         }
 
         if (field.valid && field.name === 'password-repeat' && element.value !== this.fields.find(field => field.name === 'password').element.value) {
             element.classList.add('border-danger');
+            element.nextElementSibling.classList.remove('d-none');
+            element.nextElementSibling.classList.add('d-block');
             field.valid = false;
         }
 
@@ -119,7 +125,7 @@ export class SignIn {
             if (this.page === 'signup') {
                 try {
                     const username = this.fields.find(field => field.name === 'username').element.value.split(/\s+/);
-                    const result = await CustomHttp.request(`${PathConfig.host}/signup`, 'POST', {
+                    const result = await CustomHttp.request(`${ PathConfig.host }/signup`, 'POST', {
                         name: username[0],
                         lastName: username[1],
                         email: email,
@@ -145,7 +151,7 @@ export class SignIn {
             }
 
             try {
-                const result = await CustomHttp.request(`${PathConfig.host}/login`, 'POST', {
+                const result = await CustomHttp.request(`${ PathConfig.host }/login`, 'POST', {
                     email: email,
                     password: password,
                     rememberMe: this.rememberElement.checked
